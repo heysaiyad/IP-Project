@@ -4,6 +4,7 @@ const userData = new mongoose.Schema({
   name: String,
   email: String,
   mobile: Number,
+  fine: Number,
   booksIssued: [String],
 });
 

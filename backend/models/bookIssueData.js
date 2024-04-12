@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const BookIssueData = new mongoose.Schema({
   bookName: String,
   issuedTo: String,
-  issuereNumber: Number,
+  issuersNumber: Number,
   issueData: Date,
   returnDate: Date,
 });
