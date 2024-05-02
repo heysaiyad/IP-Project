@@ -14,20 +14,18 @@ function Header() {
     setIsLoggedIn(false);
   };
   return (
-    <>
-      <div className="bg-black text-white flex flex-wrap justify-center items-center px-4 py-3 gap-40 text-xl">
-        <LinkBtn to="/" text="Home" />
-        <LinkBtn to="/add-user" text="Add a new User" />
-        <LinkBtn to="/add-books" text="Add Books" />
-        <LinkBtn to="/issue-books" text="Issue Book" />
-        <LinkBtn to="/scan-code" text="Scan Code" />
-        {isLoggedIn ? (
-          <LinkBtn to="/login" onClick={handleLogout} text="Logout" />
-        ) : (
-          <LinkBtn to="/login" text="Login" />
-        )}
-      </div>
-    </>
+    <div className="bg-blue-500 text-white flex flex-wrap justify-center items-center px-4 py-3 gap-32 text-xl shadow-md">
+      <LinkBtn to="/" text="Home" className="hover:text-yellow-300" />
+      <LinkBtn to="/add-user" text="Add a new User" className="hover:text-yellow-300" />
+      <LinkBtn to="/add-books" text="Add Books" className="hover:text-yellow-300" />
+      <LinkBtn to="/issue-books" text="Issue Book" className="hover:text-yellow-300" />
+      <LinkBtn to="/scan-code" text="Scan Code" className="hover:text-yellow-300" />
+      {isLoggedIn ? (
+        <LinkBtn to="/login" onClick={handleLogout} text="Logout" className="hover:text-yellow-300" />
+      ) : (
+        <LinkBtn to="/login" text="Login" className="hover:text-yellow-300" />
+      )}
+    </div>
   );
 }
 

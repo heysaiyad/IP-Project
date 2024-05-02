@@ -51,37 +51,38 @@ function AddUser() {
   };
 
   return (
-    <>
-      <div>AddUser</div>
-      {err && <div className="text-red-600 font-2xl">{err}</div>}
-      <form onSubmit={handleSubmit}>
-        <Input
-          text="Name"
-          placeholder="Enter Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Input
-          text="Email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Input
-          text="Number"
-          placeholder="Enter Mobile Number"
-          type="Number"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        />
-        <Button type="Submit" />
-      </form>
-      {qrData && (
-        <div className="ml-5">
-          <QRCode value={JSON.stringify(qrData)} />
-        </div>
-      )}
-    </>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
+      <div className="p-6 mt-6 text-left border w-96 rounded-xl shadow-xl bg-white">
+        <h2 className="text-2xl font-bold mb-4 text-center">Add User</h2>
+        {err && <div className="text-red-600 font-2xl mb-4">{err}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            text="Name"
+            placeholder="Enter Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border w-full p-2 rounded-md"
+          />
+          <Input
+            text="Email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border w-full p-2 rounded-md"
+          />
+          <Input
+            text="Number"
+            placeholder="Enter Mobile Number"
+            type="Number"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            className="border w-full p-2 rounded-md"
+          />
+          <Button type="Submit" className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm" />
+        </form>
+      </div>
+    </div>
+  
   );
 }
 

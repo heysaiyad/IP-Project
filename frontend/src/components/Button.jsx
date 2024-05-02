@@ -1,21 +1,19 @@
 import React from "react";
 
 function Button({
-  text = "Button",
-  type = "Submit",
+  text = "Add User",
+  type = "button",
   className = "",
   ...props
 }) {
   return (
-    <>
-      <button
-        type={type}
-        className={`border-2 border-black px-4 py-2 ${className}`}
-        {...props}
-      >
-        {text}
-      </button>
-    </>
+    <button
+      type={type}
+      className={`px-4 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700 ${className}`}
+      {...props}
+    >
+      {text}
+    </button>
   );
 }
 
