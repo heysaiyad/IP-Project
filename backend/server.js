@@ -35,17 +35,36 @@ function verifyToken(req, res, next) {
 app.post("/add-user", verifyToken, async (req, res) => {
   const { name, email, mobile } = req.body;
   try {
-    const user = new User({
+    const existingUser = await User.findOne({
+      $or: [{ email }, { mobile }],
+    });
+    if (existingUser) {
+      return res.status(409).send("User Already Exists");
+    }
+    const newUser = new User({
       name,
       email,
       mobile,
       fine: 0,
       booksIssued: [],
     });
-    console.log(user);
-    await user.save();
+    await newUser.save();
+    console.log(newUser);
     return res.status(201).send("User Successfully Created");
   } catch (error) {
+    console.error(error);
+    return res.status(501).send("Internal Server Error");
+  }
+});
+
+app.get("/qr-data", async (req, res) => {
+  const { email } = req.query; // Using query instead of body to get email
+  try {
+    const userData = await User.findOne({ email: email });
+    if (!userData) return res.status(404).send("User Not Found");
+    res.json(userData); // Send user data as JSON
+  } catch (error) {
+    console.log(error);
     res.status(501).send("Internal Server Error");
   }
 });
@@ -69,13 +88,13 @@ app.post("/add-admin", verifyToken, async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { adminId, name, email, mobile } = req.body;
-  const adminData = await Admin.findOne({ adminId });
-  console.log(adminData);
   try {
     if (!adminId || !name || !email || !mobile) {
       return res.status(401).send("All fields are required");
     } else {
+      const adminData = await Admin.findOne({ adminId });
       if (
+        !adminData ||
         adminId != adminData.adminId ||
         name != adminData.name ||
         email != adminData.email ||
@@ -83,17 +102,15 @@ app.post("/login", async (req, res) => {
       ) {
         return res.status(404).send("User not found");
       } else {
-        res.status(201);
         const token = jwt.sign({ adminId: adminData.adminId }, "SECRET_KEY");
-        res.send({ token });
-        return res.status(201).send(adminData);
+        return res.status(201).send({ token, adminData });
       }
     }
   } catch (error) {
-    res.status(501).send("Internal Server Error");
+    console.error(error);
+    return res.status(501).send("Internal Server Error");
   }
 });
-
 app.post("/add-books", verifyToken, async (req, res) => {
   const { bookName, author, genre, quantity } = req.body;
   try {
