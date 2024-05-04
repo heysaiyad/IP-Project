@@ -16,12 +16,28 @@ function Header() {
   return (
     <div className="bg-blue-500 text-white flex flex-wrap justify-center items-center px-4 py-3 gap-32 text-xl shadow-md">
       <LinkBtn to="/" text="Home" className="hover:text-yellow-300" />
-      <LinkBtn to="/add-user" text="Add a new User" className="hover:text-yellow-300" />
-      <LinkBtn to="/add-books" text="Add Books" className="hover:text-yellow-300" />
-      <LinkBtn to="/issue-books" text="Issue Book" className="hover:text-yellow-300" />
-      <LinkBtn to="/scan-code" text="Scan Code" className="hover:text-yellow-300" />
+      <LinkBtn
+        to="/add-user"
+        text="Add a new User"
+        className="hover:text-yellow-300"
+      />
+      <LinkBtn
+        to="/add-books"
+        text="Add Books"
+        className="hover:text-yellow-300"
+      />
+      <LinkBtn
+        to="/scan-code"
+        text="Scan Code"
+        className="hover:text-yellow-300"
+      />
       {isLoggedIn ? (
-        <LinkBtn to="/login" onClick={handleLogout} text="Logout" className="hover:text-yellow-300" />
+        <LinkBtn
+          to="/login"
+          onClick={handleLogout}
+          text="Logout"
+          className="hover:text-yellow-300"
+        />
       ) : (
         <LinkBtn to="/login" text="Login" className="hover:text-yellow-300" />
       )}

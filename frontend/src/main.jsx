@@ -8,11 +8,17 @@ import AddUser from "./components/AddUser.jsx";
 import AddBooks from "./components/AddBooks.jsx";
 import IssueBooks from "./components/IssueBooks.jsx";
 import ScanCode from "./components/ScanCode.jsx";
+import Home from "./components/Home.jsx";
+import UserInfo from "./components/UserInfo.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
       {
         path: "/login",
         element: <Login />,
@@ -26,19 +32,23 @@ const router = createBrowserRouter([
         element: <AddBooks />,
       },
       {
-        path: "/issue-books",
+        path: "/:id/issue-book",
         element: <IssueBooks />,
       },
       {
         path: "/scan-code",
         element: <ScanCode />,
       },
+      {
+        path: "/:id/userInfo",
+        element: <UserInfo />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </>,
 );
