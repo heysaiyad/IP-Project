@@ -39,6 +39,7 @@ function AddUser() {
             const qr = await axios.get(`${link.url}/qr-data`, {
               params: { email: email },
             });
+            console.log(qr.data);
             setQrData(qr.data);
           }
         }
@@ -78,11 +79,18 @@ function AddUser() {
             onChange={(e) => setNumber(e.target.value)}
             className="border w-full p-2 rounded-md"
           />
-          <Button type="Submit" className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm" />
-        </form>
+          <Button
+            type="Submit"
+            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm"
+          />
+        </form>{" "}
       </div>
+      {qrData && (
+        <div className="m-5">
+          <QRCode value={JSON.stringify(qrData)} />
+        </div>
+      )}
     </div>
-  
   );
 }
 

@@ -58,11 +58,11 @@ app.post("/add-user", verifyToken, async (req, res) => {
 });
 
 app.get("/qr-data", async (req, res) => {
-  const { email } = req.query; // Using query instead of body to get email
+  const { email } = req.query;
   try {
     const userData = await User.findOne({ email: email });
     if (!userData) return res.status(404).send("User Not Found");
-    res.json(userData); // Send user data as JSON
+    res.json(userData);
   } catch (error) {
     console.log(error);
     res.status(501).send("Internal Server Error");
