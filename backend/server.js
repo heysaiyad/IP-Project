@@ -130,31 +130,36 @@ app.post("/add-books", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/issue-book", verifyToken, async (req, res) => {
-  const { mobile, bookName } = req.body;
+app.post("/:id/issue-book", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { bookName } = req.body;
   try {
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({ _id: id });
     const book = await Books.findOne({ bookName });
     if (!user) {
       return res.status(404).send("No such user");
     }
     if (book && book.quantity >= 1) {
-      if (user.booksIssued.includes(bookName)) {
-        return res.status(401).send("Book already Issued");
+      if (user.booksIssued.some((book) => book.name === bookName)) {
+        res.status(401).send("Book already Issued");
       } else {
-        user.booksIssued.push(bookName);
+        const issueDate = new Date();
+        const returnDate = new Date(issueDate);
+        returnDate.setDate(returnDate.getDate() + 20);
         book.quantity--;
 
         const newIssuedBook = new IssuedBooks({
           bookName: bookName,
           issuedTo: user.name,
           issuersNumber: user.mobile,
-          issueDate: new Date().toLocaleDateString("en-IN"),
+          issueDate: issueDate,
         });
 
-        const returnDate = new Date();
-        returnDate.setDate(returnDate.getDate() + 25);
-        newIssuedBook.returnDate = returnDate.toISOString().split("T")[0];
+        user.booksIssued.push({
+          name: bookName,
+          issueDate: issueDate,
+          returnDate: returnDate,
+        });
 
         await user.save();
         await book.save();
@@ -171,40 +176,53 @@ app.post("/issue-book", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/return-book", verifyToken, async (req, res) => {
-  const { bookName, mobile } = req.body;
+app.post("/return-book", async (req, res) => {
+  const { bookName, id } = req.body;
   try {
     const book = await Books.findOne({ bookName });
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({ _id: id });
     const bookIssued = await IssuedBooks.findOne({
       bookName,
-      issuersNumber: mobile,
+      issuersId: id,
     });
-    console.log(bookIssued);
-    if (user && user.booksIssued.includes(bookName)) {
-      user.booksIssued = user.booksIssued.filter((book) => book !== bookName);
+
+    if (
+      user &&
+      user.booksIssued.some((issuedBook) => issuedBook.name === bookName)
+    ) {
+      user.booksIssued = user.booksIssued.filter(
+        (issuedBook) => issuedBook.name !== bookName,
+      );
+
       book.quantity++;
 
       const today = new Date();
       const returnDate = new Date(bookIssued.returnDate);
-      const overdue = Math.ceil((today - returnDate) / (1000 * 3600 * 24));
-
-      const fine = overdue > 0 ? overdue * 100 : 0;
+      console.log(returnDate);
+      const overdueDays = Math.floor((today - returnDate) / (1000 * 3600 * 24));
+      const fine = overdueDays > 0 ? overdueDays * 100 : 0;
 
       user.fine += fine;
 
       await user.save();
       await book.save();
+
       await IssuedBooks.deleteOne({
         bookName: bookName,
-        issuersNumber: mobile,
+        issuedTo: user.name,
       });
-      return res.status(201).json({ user });
+
+      return res
+        .status(200)
+        .json({ message: "Book returned successfully", fine: fine });
     } else {
-      return res.status(404).json({ message: "No such book or user" });
+      return res
+        .status(404)
+        .json({ message: "No such book issued to this user" });
     }
   } catch (error) {
-    return res.status(501).send("Internal Server Error");
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
   }
 });
 
@@ -217,7 +235,30 @@ app.get("/display-users", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/:id/userInfo", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findOne({ _id: id });
+    console.log(user);
+    res.send(user);
+  } catch (error) {
+    res.status(501).send("Internal Server Error");
+  }
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Listening to ${port}`);
+});
+
+app.get("/:adminId/admin-info", verifyToken, async (req, res) => {
+  const { adminId } = req.params;
+  try {
+    const admin = await Admin.findOne({ adminId });
+    if (!admin) return res.status(404).send("No Admin Found");
+    res.status(201).send(admin);
+  } catch (error) {
+    console.log(error);
+    res.status(501).send("Internal Server Error");
+  }
 });
