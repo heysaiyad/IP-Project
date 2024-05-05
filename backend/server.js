@@ -111,21 +111,30 @@ app.post("/login", async (req, res) => {
     return res.status(501).send("Internal Server Error");
   }
 });
+
 app.post("/add-books", verifyToken, async (req, res) => {
   const { bookName, author, genre, quantity } = req.body;
   try {
     if (!bookName || !author || !genre || !quantity) {
       return res.status(401).send("All fields are required");
     }
-    const newBook = new Books({
-      bookName,
-      author,
-      genre,
-      quantity,
-    });
-    await newBook.save();
+    const isAdded = await Books.findOne({ bookName });
+    if (isAdded) {
+      isAdded.quantity += parseInt(quantity);
+      await isAdded.save();
+    } else {
+      const newBook = new Books({
+        bookName,
+        author,
+        genre,
+        quantity,
+      });
+      await newBook.save();
+    }
+
     return res.status(201).send("Book Data Saved Successfully");
   } catch (error) {
+    console.log(error);
     res.status(501).send("Internal Server Error");
   }
 });
@@ -151,7 +160,7 @@ app.post("/:id/issue-book", verifyToken, async (req, res) => {
         const newIssuedBook = new IssuedBooks({
           bookName: bookName,
           issuedTo: user.name,
-          issuersNumber: user.mobile,
+          issuersId: user._id,
           issueDate: issueDate,
         });
 
@@ -209,7 +218,7 @@ app.post("/return-book", async (req, res) => {
 
       await IssuedBooks.deleteOne({
         bookName: bookName,
-        issuedTo: user.name,
+        issuersId: id,
       });
 
       return res
@@ -225,7 +234,6 @@ app.post("/return-book", async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 });
-
 app.get("/display-users", verifyToken, async (req, res) => {
   try {
     const users = await User.find();

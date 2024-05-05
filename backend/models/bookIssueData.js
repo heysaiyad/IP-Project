@@ -1,8 +1,9 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const BookIssueData = new mongoose.Schema({
   bookName: String,
   issuedTo: String,
-  issuersId: Number,
+  issuersId: ObjectId,
   issueData: Date,
   returnDate: Date,
 });
