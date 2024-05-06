@@ -113,7 +113,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/add-books", verifyToken, async (req, res) => {
-  const { bookName, author, genre, quantity } = req.body;
+  const { bookName, author, genre, quantity, booksId } = req.body;
   try {
     if (!bookName || !author || !genre || !quantity) {
       return res.status(401).send("All fields are required");
@@ -121,6 +121,9 @@ app.post("/add-books", verifyToken, async (req, res) => {
     const isAdded = await Books.findOne({ bookName });
     if (isAdded) {
       isAdded.quantity += parseInt(quantity);
+      booksId.forEach((bId) => {
+        isAdded.booksId.push(bId);
+      });
       await isAdded.save();
     } else {
       const newBook = new Books({
@@ -128,6 +131,7 @@ app.post("/add-books", verifyToken, async (req, res) => {
         author,
         genre,
         quantity,
+        booksId,
       });
       await newBook.save();
     }

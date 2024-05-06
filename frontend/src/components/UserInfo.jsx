@@ -7,7 +7,6 @@ function UserInfo() {
   const token = localStorage.getItem("jwtToken");
 
   const navigate = useNavigate();
-  console.log(id);
   const [err, setErr] = useState("");
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {

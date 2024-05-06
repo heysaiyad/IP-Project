@@ -4,6 +4,7 @@ const BooksData = new mongoose.Schema({
   author: String,
   genre: String,
   quantity: Number,
+  booksId: [String],
 });
 
 const Books = mongoose.model("Books", BooksData);
