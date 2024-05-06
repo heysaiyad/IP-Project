@@ -26,6 +26,7 @@ function IssueBooks() {
         },
       );
       alert("Book Issued");
+      navigate(`/${id}/userInfo`);
     } catch (error) {
       if (error.response.status === 401) setErr("Book already issued");
       if (error.response.status === 404) setErr("Book Not found");
