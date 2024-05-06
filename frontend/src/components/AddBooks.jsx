@@ -2,18 +2,21 @@ import React, { useState } from "react";
 import Input from "./Input";
 import link from "./link.json";
 import axios from "axios";
+import QRCode from "react-qr-code";
+
 function AddBooks() {
   const [bookName, setBookName] = useState("");
   const [bookQuantity, setBookQuantity] = useState(0);
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
+  const [qrData, setQrData] = useState(null);
   const token = localStorage.getItem("jwtToken");
   console.log(token);
 
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      const data = await axios.post(
         `${link.url}/add-books`,
         {
           bookName: bookName,
@@ -24,6 +27,14 @@ function AddBooks() {
 
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      console.log(data);
+      if (data.status === 201) {
+        const res = await axios.get(`${link.url}/${bookName}/book-data`, {
+          bookName: bookName,
+        });
+        console.log(res.data);
+        setQrData(res.data);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -69,6 +80,11 @@ function AddBooks() {
         placeholder="Quantity"
       />
       <button onClick={handleAdd}>Add Book</button>
+      {qrData && (
+        <div className="m-5">
+          <QRCode value={JSON.stringify(qrData)} />
+        </div>
+      )}
     </>
   );
 }

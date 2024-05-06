@@ -139,6 +139,20 @@ app.post("/add-books", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/:bookName/book-data", async (req, res) => {
+  const bookName = req.params;
+  try {
+    const book = await Books.findOne(bookName);
+    if (!book) {
+      res.status(404).send("Book Not Found");
+    }
+    return res.status(201).send(book);
+  } catch (error) {
+    console.log(error);
+    res.status(501).send("Internal server error");
+  }
+});
+
 app.post("/:id/issue-book", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { bookName } = req.body;
