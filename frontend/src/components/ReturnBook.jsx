@@ -29,7 +29,9 @@ function ReturnBook() {
       }
     } catch (error) {
       console.log(error);
-      if (error.status === 500) return setErr(`Book with this Id not issued`);
+      if (error.response.status === 404)
+        return setErr(`Book with this Id/Name not issued`);
+      setErr(error.message);
     }
   };
   const handleError = () => {};
