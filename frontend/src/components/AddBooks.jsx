@@ -3,19 +3,36 @@ import Input from "./Input";
 import link from "./link.json";
 import axios from "axios";
 import QRCode from "react-qr-code";
+import { v4 as uuid } from "uuid";
+import { useRef } from "react";
+import ReactToPrint from "react-to-print";
 
 function AddBooks() {
+  const qrRef = useRef();
   const [bookName, setBookName] = useState("");
   const [bookQuantity, setBookQuantity] = useState(0);
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
-  const [qrData, setQrData] = useState(null);
+  const [qrCodes, setQrCodes] = useState([]);
   const token = localStorage.getItem("jwtToken");
-  console.log(token);
 
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
+      const bId = [];
+
+      const generatedQrCodes = [];
+
+      for (let i = 0; i < bookQuantity; i++) {
+        const uniqueId = uuid();
+        generatedQrCodes.push({
+          Id: uniqueId,
+          Name: bookName,
+          Genre: genre,
+          Author: author,
+        });
+        bId.push(uniqueId);
+      }
       const data = await axios.post(
         `${link.url}/add-books`,
         {
@@ -23,8 +40,8 @@ function AddBooks() {
           genre: genre,
           author: author,
           quantity: bookQuantity,
+          booksId: bId,
         },
-
         { headers: { Authorization: `Bearer ${token}` } },
       );
       console.log(data);
@@ -33,7 +50,8 @@ function AddBooks() {
           bookName: bookName,
         });
         console.log(res.data);
-        setQrData(res.data);
+
+        setQrCodes(generatedQrCodes);
       }
     } catch (error) {
       console.log(error);
@@ -80,11 +98,19 @@ function AddBooks() {
         placeholder="Quantity"
       />
       <button onClick={handleAdd}>Add Book</button>
-      {qrData && (
-        <div className="m-5">
-          <QRCode value={JSON.stringify(qrData)} />
-        </div>
-      )}
+      <div
+        className="flex flex-wrap justify-evenly items-center gap-7 px-10 py-4"
+        id="qr"
+        ref={qrRef}
+      >
+        {qrCodes.map((qrData) => (
+          <QRCode key={qrData.Id} value={JSON.stringify(qrData)} size={100} />
+        ))}
+      </div>
+      <ReactToPrint
+        trigger={() => <button>Print Codes</button>}
+        content={() => qrRef.current}
+      />
     </>
   );
 }
