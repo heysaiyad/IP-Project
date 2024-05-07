@@ -3,7 +3,11 @@ import Input from "./Input";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import link from "./link.json";
+import { useDispatch } from "react-redux";
+import { login } from "../Store/authSlice";
+
 function Login() {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [adminId, setAdminId] = useState(null);
   const [email, setEmail] = useState("");
@@ -25,6 +29,7 @@ function Login() {
       if (data.status === 201) {
         localStorage.setItem("jwtToken", data.data.token);
         localStorage.setItem("adminId", adminId);
+        dispatch(login());
         navigate("/");
       }
 
