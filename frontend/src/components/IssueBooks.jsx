@@ -3,12 +3,14 @@ import Input from "./Input";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router";
 import link from "./link.json";
+import QrCodeScanner from "./QrCodeScanner";
 function IssueBooks() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [bookName, setBookName] = useState("");
+  const [scannedData, setScannedData] = useState(null);
   const [err, setErr] = useState("");
-
+  /*
   const handleIssue = async (e) => {
     const token = localStorage.getItem("jwtToken");
 
@@ -33,9 +35,14 @@ function IssueBooks() {
       else setErr(error.response.data.message || "An error occurred");
     }
   };
+    */
+
+  const handleSuccess = (decodedText, decodedResult) => {};
+  const handleError = () => {};
   return (
     <>
       {err && <div className="text-2xl text-red-600">{err}</div>}
+      /*
       <div>IssueBooks</div>
       <Input
         text="Book Name"
@@ -45,6 +52,16 @@ function IssueBooks() {
       <button className="border-2 border-black px-6 py-2" onClick={handleIssue}>
         Issue book
       </button>
+      */
+      <div id="reader"></div>
+      <QrCodeScanner
+        height={500}
+        id="reader"
+        width={500}
+        fps={5}
+        onSuccess={handleSuccess}
+        onError={handleError}
+      />
     </>
   );
 }
