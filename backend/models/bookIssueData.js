@@ -6,6 +6,7 @@ const BookIssueData = new mongoose.Schema({
   issuersId: ObjectId,
   issueData: Date,
   returnDate: Date,
+  bookId: String,
 });
 
 const BookIssue = new mongoose.model("BookIssue", BookIssueData);

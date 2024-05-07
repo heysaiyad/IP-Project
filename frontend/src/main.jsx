@@ -10,6 +10,7 @@ import IssueBooks from "./components/IssueBooks.jsx";
 import ScanCode from "./components/ScanCode.jsx";
 import Home from "./components/Home.jsx";
 import UserInfo from "./components/UserInfo.jsx";
+import ReturnBook from "./components/ReturnBook.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/:id/userInfo",
         element: <UserInfo />,
+      },
+      {
+        path: "/:id/:bookName/return",
+        element: <ReturnBook />,
       },
     ],
   },

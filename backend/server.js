@@ -160,6 +160,7 @@ app.get("/:bookName/book-data", async (req, res) => {
 app.post("/:id/issue-book", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { bookName } = req.body;
+  const { bId } = req.body;
   try {
     const user = await User.findOne({ _id: id });
     const book = await Books.findOne({ bookName });
@@ -180,12 +181,14 @@ app.post("/:id/issue-book", verifyToken, async (req, res) => {
           issuedTo: user.name,
           issuersId: user._id,
           issueDate: issueDate,
+          bookId: bId,
         });
 
         user.booksIssued.push({
           name: bookName,
           issueDate: issueDate,
           returnDate: returnDate,
+          bId: bId,
         });
 
         await user.save();
@@ -198,19 +201,20 @@ app.post("/:id/issue-book", verifyToken, async (req, res) => {
       return res.status(404).send("No Such Book");
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).send("Internal Server Error");
   }
 });
 
 app.post("/return-book", async (req, res) => {
-  const { bookName, id } = req.body;
+  const { bookName, id, bId } = req.body;
   try {
     const book = await Books.findOne({ bookName });
     const user = await User.findOne({ _id: id });
     const bookIssued = await IssuedBooks.findOne({
       bookName,
       issuersId: id,
+      bookId: bId,
     });
 
     if (
@@ -237,6 +241,7 @@ app.post("/return-book", async (req, res) => {
       await IssuedBooks.deleteOne({
         bookName: bookName,
         issuersId: id,
+        bookId: bId,
       });
 
       return res

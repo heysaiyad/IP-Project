@@ -26,16 +26,22 @@ function UserInfo() {
   }, [id]);
 
   const handleReturn = async (bookName) => {
-    console.log(bookName);
+    {
+      /*
+console.log(bookName);
     await axios.post(`${link.url}/return-book`, {
       bookName: bookName,
       id: id,
     });
+
+  */
+    }
+    navigate(`/${id}/${bookName}/return`);
   };
 
   const handleBookIssue = (e) => {
     e.preventDefault();
-    navigate(`/${id}/issue-book`);
+    navigate(`/${id}/issue-book`, { id: id });
   };
 
   const formatDate = (dateString) => {
@@ -48,6 +54,7 @@ function UserInfo() {
 
   return (
     <>
+      {err && <h2 className="text-red-700 text-2xl"> {err} </h2>}
       {userInfo && (
         <div>
           <h1>Name: {userInfo.name}</h1>

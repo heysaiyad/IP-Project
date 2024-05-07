@@ -3,6 +3,7 @@ const bookSchema = new mongoose.Schema({
   name: String,
   issueDate: Date,
   returnDate: Date,
+  bId: String,
 });
 
 const userData = new mongoose.Schema({
