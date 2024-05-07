@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import LinkBtn from "./LinkBtn";
-
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../Store/authSlice";
 function Header() {
+  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const token = localStorage.getItem("jwtToken");
+  const authStatus = useSelector((state) => state.auth);
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
     if (!token) setIsLoggedIn(false);
     else setIsLoggedIn(true);
   }, [isLoggedIn]);
@@ -12,26 +15,31 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     setIsLoggedIn(false);
+    dispatch(logout());
   };
   return (
     <div className="bg-blue-500 text-white flex flex-wrap justify-center items-center px-4 py-3 gap-32 text-xl shadow-md">
-      <LinkBtn to="/" text="Home" className="hover:text-yellow-300" />
       <LinkBtn
-        to="/add-user"
+        to={token ? "/" : "/login"}
+        text="Home"
+        className="hover:text-yellow-300"
+      />
+      <LinkBtn
+        to={token ? "/add-user" : "/login"}
         text="Add a new User"
         className="hover:text-yellow-300"
       />
       <LinkBtn
-        to="/add-books"
+        to={token ? "/add-books" : "/login"}
         text="Add Books"
         className="hover:text-yellow-300"
       />
       <LinkBtn
-        to="/scan-code"
+        to={token ? "/scan-code" : "/login"}
         text="Scan Code"
         className="hover:text-yellow-300"
       />
-      {isLoggedIn ? (
+      {authStatus.auth ? (
         <LinkBtn
           to="/login"
           onClick={handleLogout}
