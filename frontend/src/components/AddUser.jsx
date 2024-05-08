@@ -1,58 +1,56 @@
 import axios from "axios";
 import Button from "./Button";
 import Input from "./Input";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import link from "./link.json";
-import QRCode from "react-qr-code";
+import UserCard from "./UserCard";
+import ReactToPrint from "react-to-print";
 
 function AddUser() {
+  const idRef = useRef();
   const token = localStorage.getItem("jwtToken");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [err, setErr] = useState("");
   const [qrData, setQrData] = useState(null);
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
-    console.log(`${name} :: ${email} :: ${number}`);
-    const makeUser = async () => {
-      try {
-        if (!token) return setErr("Login to perform this action");
-        else {
-          setErr("");
-          const response = await axios.post(
-            `${link.url}/add-user`,
-            {
-              name: name,
-              email: email,
-              mobile: number,
-            },
-            {
-              headers: {
-                authorization: `Bearer ${token}`,
-              },
-            },
-          );
-          console.log(response);
-          if (response.status === 201) {
-            const qr = await axios.get(`${link.url}/qr-data`, {
-              params: { email: email },
-            });
-            console.log(qr.data);
-            setQrData(qr.data);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        setErr(error.message);
+    try {
+      if (!token) return setErr("Login to perform this action");
+
+      setErr("");
+
+      const response = await axios.post(
+        `${link.url}/add-user`,
+        {
+          name: name,
+          email: email,
+          mobile: number,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 201) {
+        const qr = await axios.get(`${link.url}/qr-data`, {
+          params: { email: email },
+        });
+
+        setQrData(qr.data);
       }
-    };
-    makeUser();
+    } catch (error) {
+      console.log(error);
+      setErr(error.message);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
+    <div className="flex flex-row items-center justify-around h-screen bg-gray-200">
       <div className="p-6 mt-6 text-left border w-96 rounded-xl shadow-xl bg-white">
         <h2 className="text-2xl font-bold mb-4 text-center">Add User</h2>
         {err && <div className="text-red-600 font-2xl mb-4">{err}</div>}
@@ -83,11 +81,22 @@ function AddUser() {
             type="Submit"
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm"
           />
-        </form>{" "}
+        </form>
       </div>
       {qrData && (
-        <div className="m-5">
-          <QRCode value={JSON.stringify(qrData)} />
+        <div>
+          <div ref={idRef} className="w-fit h-fit items-center justify-center">
+            <UserCard
+              name={name}
+              email={email}
+              mobileNumber={number}
+              qrCode={qrData}
+            />
+          </div>
+          <ReactToPrint
+            trigger={() => <button>Generate Id Card</button>}
+            content={() => idRef.current}
+          />
         </div>
       )}
     </div>

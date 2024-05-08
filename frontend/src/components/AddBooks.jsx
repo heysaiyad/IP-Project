@@ -107,10 +107,12 @@ function AddBooks() {
           <QRCode key={qrData.Id} value={JSON.stringify(qrData)} size={100} />
         ))}
       </div>
-      <ReactToPrint
-        trigger={() => <button>Print Codes</button>}
-        content={() => qrRef.current}
-      />
+      {qrCodes && (
+        <ReactToPrint
+          trigger={() => <button>Print Codes</button>}
+          content={() => qrRef.current}
+        />
+      )}
     </>
   );
 }
