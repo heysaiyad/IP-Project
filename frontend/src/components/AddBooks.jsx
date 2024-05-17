@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import Input from "./Input";
 import link from "./link.json";
 import axios from "axios";
 import QRCode from "react-qr-code";
 import { v4 as uuid } from "uuid";
 import { useRef } from "react";
 import ReactToPrint from "react-to-print";
+import { TextField } from "@mui/material";
 
 function AddBooks() {
   const qrRef = useRef();
   const [bookName, setBookName] = useState("");
-  const [bookQuantity, setBookQuantity] = useState(0);
+  const [bookQuantity, setBookQuantity] = useState(null);
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
   const [qrCodes, setQrCodes] = useState([]);
@@ -59,61 +59,81 @@ function AddBooks() {
   };
 
   return (
-    <>
-      <Input
-        text="Book Name: "
-        onChange={(e) => {
-          e.preventDefault();
-          setBookName(e.target.value);
-        }}
-        value={bookName}
-        placeholder="Book Name"
-      />
-      <Input
-        text="Genre: "
-        onChange={(e) => {
-          e.preventDefault();
-          setGenre(e.target.value);
-        }}
-        value={genre}
-        placeholder="Genre"
-      />
-      <Input
-        text="Author: "
-        onChange={(e) => {
-          e.preventDefault();
-          setAuthor(e.target.value);
-        }}
-        value={author}
-        placeholder="Author Name"
-      />
-      <Input
-        text="Quantity: "
-        type="number"
-        onChange={(e) => {
-          e.preventDefault();
-          setBookQuantity(e.target.value);
-        }}
-        value={bookQuantity}
-        placeholder="Quantity"
-      />
-      <button onClick={handleAdd}>Add Book</button>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
+      <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4 text-center">Add Books</h2>
+        <form onSubmit={handleAdd} className="space-y-4">
+          <TextField
+            variant="outlined"
+            label="Book Name"
+            type="text"
+            value={bookName}
+            onChange={(e) => setBookName(e.target.value)}
+            className="w-full"
+          />
+
+          <TextField
+            variant="outlined"
+            label="Genre"
+            type="text"
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+            className="w-full"
+          />
+
+          <TextField
+            variant="outlined"
+            label="Author"
+            type="text"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            className="w-full"
+          />
+
+          <TextField
+            variant="outlined"
+            label="Quantity"
+            type="number"
+            value={bookQuantity}
+            onChange={(e) => setBookQuantity(e.target.value)}
+            className="w-full"
+          />
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm"
+          >
+            Add Book
+          </button>
+        </form>
+      </div>
+
       <div
-        className="flex flex-wrap justify-evenly items-center gap-7 px-10 py-4"
+        className="flex flex-wrap justify-evenly items-center gap-7 mt-8 px-10 py-4"
         id="qr"
         ref={qrRef}
       >
         {qrCodes.map((qrData) => (
-          <QRCode key={qrData.Id} value={JSON.stringify(qrData)} size={100} />
+          <QRCode
+            key={qrData.Id}
+            value={JSON.stringify(qrData)}
+            size={100}
+            className="border-2 border-gray-500 p-2"
+          />
         ))}
       </div>
-      {qrCodes && (
+
+      {qrCodes.length > 0 && (
         <ReactToPrint
-          trigger={() => <button>Print Codes</button>}
+          trigger={() => (
+            <button className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm">
+              Print Codes
+            </button>
+          )}
           content={() => qrRef.current}
         />
       )}
-    </>
+    </div>
   );
 }
 

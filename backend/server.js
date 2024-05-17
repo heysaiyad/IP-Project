@@ -34,6 +34,8 @@ function verifyToken(req, res, next) {
 
 app.post("/add-user", verifyToken, async (req, res) => {
   const { name, email, mobile } = req.body;
+  if (!name || !email || !mobile)
+    return res.status(401).send("All fields are required");
   try {
     const existingUser = await User.findOne({
       $or: [{ email }, { mobile }],

@@ -1,10 +1,9 @@
 import axios from "axios";
-import Button from "./Button";
-import Input from "./Input";
 import React, { useRef, useState } from "react";
 import link from "./link.json";
 import UserCard from "./UserCard";
 import ReactToPrint from "react-to-print";
+import { TextField } from "@mui/material";
 
 function AddUser() {
   const idRef = useRef();
@@ -31,7 +30,7 @@ function AddUser() {
         },
         {
           headers: {
-            authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
@@ -45,7 +44,7 @@ function AddUser() {
       }
     } catch (error) {
       console.log(error);
-      setErr(error.message);
+      setErr(error.response?.data);
     }
   };
 
@@ -53,48 +52,62 @@ function AddUser() {
     <div className="flex flex-row items-center justify-around h-screen bg-gray-200">
       <div className="p-6 mt-6 text-left border w-96 rounded-xl shadow-xl bg-white">
         <h2 className="text-2xl font-bold mb-4 text-center">Add User</h2>
-        {err && <div className="text-red-600 font-2xl mb-4">{err}</div>}
+        {err && <div className="text-red-600 font-bold mb-4">{err}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            text="Name"
-            placeholder="Enter Name"
+          <TextField
+            variant="outlined"
+            label="Name"
+            type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border w-full p-2 rounded-md"
+            className="w-full"
           />
-          <Input
-            text="Email"
-            placeholder="Enter Email"
+
+          <TextField
+            variant="outlined"
+            label="Email"
             value={email}
+            type="email"
             onChange={(e) => setEmail(e.target.value)}
-            className="border w-full p-2 rounded-md"
+            className="w-full"
           />
-          <Input
-            text="Number"
-            placeholder="Enter Mobile Number"
-            type="Number"
+
+          <TextField
+            variant="outlined"
+            label="Mobile Number"
             value={number}
             onChange={(e) => setNumber(e.target.value)}
-            className="border w-full p-2 rounded-md"
+            className="w-full"
           />
-          <Button
-            type="Submit"
+
+          <button
+            type="submit"
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm"
-          />
+          >
+            Add User
+          </button>
         </form>
       </div>
+
       {qrData && (
-        <div>
-          <div ref={idRef} className="w-fit h-fit items-center justify-center">
-            <UserCard
-              name={name}
-              email={email}
-              mobileNumber={number}
-              qrCode={qrData}
-            />
+        <div className="ml-6">
+          <div className="flex items-center justify-center">
+            <div ref={idRef} className="flex items-center justify-center">
+              <UserCard
+                name={name}
+                email={email}
+                mobileNumber={number}
+                qrCode={qrData}
+              />
+            </div>
           </div>
+
           <ReactToPrint
-            trigger={() => <button>Generate Id Card</button>}
+            trigger={() => (
+              <button className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm">
+                Generate ID Card
+              </button>
+            )}
             content={() => idRef.current}
           />
         </div>

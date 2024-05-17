@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import link from "./link.json";
 import { useDispatch } from "react-redux";
 import { login } from "../Store/authSlice";
-
+import { TextField } from "@mui/material";
 function Login() {
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
@@ -36,38 +36,43 @@ function Login() {
       console.log(data.data.token);
     } catch (error) {
       console.log(error);
-      setErr(error);
+      setErr(error.response?.data);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
-      <div className="p-6 mt-6 text-left border w-96 rounded-xl shadow-xl bg-white">
+      {err && <h2 className="text-red-700 text-2xl">{err}</h2>}
+      <div className="px-14 py-8 mt-6 w-fit rounded-xl shadow-xl bg-white flex items-center justify-center flex-col">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <Input
-            text="Username"
+        <br />
+        <form
+          onSubmit={handleLogin}
+          className="space-y-4 flex items-center justify-center flex-col"
+        >
+          <TextField
+            variant="outlined"
+            label="Username"
             type="text"
             onChange={(e) => setUsername(e.currentTarget.value)}
-            className="border w-full p-2 rounded-md"
           />
-          <Input
-            text="Id"
+          <TextField
+            variant="outlined"
+            label="Admin Id"
             type="number"
             onChange={(e) => setAdminId(e.currentTarget.value)}
-            className="border w-full p-2 rounded-md"
           />
-          <Input
-            text="Email"
-            type="text"
+          <TextField
+            variant="outlined"
+            label="Email"
+            type="email"
             onChange={(e) => setEmail(e.currentTarget.value)}
-            className="border w-full p-2 rounded-md"
           />
-          <Input
-            text="Number"
+          <TextField
+            variant="outlined"
+            label="Mobile Number"
             type="number"
             onChange={(e) => setNumber(e.currentTarget.value)}
-            className="border w-full p-2 rounded-md"
           />
           <button
             type="submit"
