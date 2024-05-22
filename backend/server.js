@@ -279,11 +279,6 @@ app.get("/:id/userInfo", verifyToken, async (req, res) => {
   }
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Listening to ${port}`);
-});
-
 app.get("/:adminId/admin-info", verifyToken, async (req, res) => {
   const { adminId } = req.params;
   try {
@@ -294,4 +289,29 @@ app.get("/:adminId/admin-info", verifyToken, async (req, res) => {
     console.log(error);
     res.status(501).send("Internal Server Error");
   }
+});
+
+app.get("/allBooks-details", verifyToken, async (req, res) => {
+  try {
+    const books = await Books.find();
+    res.status(201).send({ books });
+  } catch (error) {
+    console.log(error);
+    res.status(501).send("Internal Server Error");
+  }
+});
+
+app.get("/issued-books", verifyToken, async (req, res) => {
+  try {
+    const issuedBooks = await IssuedBooks.find();
+    res.status(201).send({ issuedBooks });
+  } catch (error) {
+    console.log(error);
+    res.status(501).send("Internal Server Error");
+  }
+});
+
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Listening to ${port}`);
 });

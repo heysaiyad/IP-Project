@@ -59,7 +59,7 @@ function AddBooks() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200">
       <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center">Add Books</h2>
         <form onSubmit={handleAdd} className="space-y-4">

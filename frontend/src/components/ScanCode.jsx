@@ -29,7 +29,6 @@ function ScanCode() {
 
   return (
     <>
-      <h1>Scan Code</h1>
       <div id="reader"></div>
       <QrCodeScanner
         height={500}

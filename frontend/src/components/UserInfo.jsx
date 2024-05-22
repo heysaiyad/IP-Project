@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import link from "./link.json";
+
 function UserInfo() {
   const { id } = useParams();
   const token = localStorage.getItem("jwtToken");
@@ -9,33 +10,24 @@ function UserInfo() {
   const navigate = useNavigate();
   const [err, setErr] = useState("");
   const [userInfo, setUserInfo] = useState({});
+
   useEffect(() => {
     const userData = async () => {
       try {
-        if (!token) return setErr("Login To continue");
+        if (!token) return setErr("Login to continue");
         const response = await axios.get(`${link.url}/${id}/userInfo`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response.data);
         setUserInfo(response.data);
       } catch (error) {
+        setErr(error.response?.data);
         console.log(error);
       }
     };
     userData();
-  }, [id]);
+  }, [id, token]);
 
   const handleReturn = async (bookName) => {
-    {
-      /*
-console.log(bookName);
-    await axios.post(`${link.url}/return-book`, {
-      bookName: bookName,
-      id: id,
-    });
-
-  */
-    }
     navigate(`/${id}/${bookName}/return`);
   };
 
@@ -46,59 +38,85 @@ console.log(bookName);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}/${month}/${day}`;
+    const formattedDate = date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formattedDate;
   };
 
   return (
-    <>
-      {err && <h2 className="text-red-700 text-2xl"> {err} </h2>}
+    <div className="flex flex-row items-center justify-evenly min-h-screen bg-gray-200">
+      {err && <h2 className="text-red-700 text-2xl mb-4">{err}</h2>}
       {userInfo && (
-        <div>
-          <h1>Name: {userInfo.name}</h1>
-          <h1>Mobile Number: {userInfo.mobile}</h1>
-          <h1>Email: {userInfo.email}</h1>
-          <h1>Fine: {userInfo.fine}</h1>
+        <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-4 text-center">
+            User Information
+          </h1>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold">Name:</h2>
+            <p>{userInfo.name}</p>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold">Mobile Number:</h2>
+            <p>{userInfo.mobile}</p>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold">Email:</h2>
+            <p>{userInfo.email}</p>
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold">Fine:</h2>
+            <p>{userInfo.fine}</p>
+          </div>
         </div>
       )}
-      {userInfo.booksIssued && (
-        <div>
-          <h2>Books Issued:</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Issued Date</th>
-                <th>Return Date</th>
-                <th>Return</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userInfo.booksIssued.map((book) => (
-                <tr key={book.name}>
-                  <td>{book.name}</td>
-                  <td>{formatDate(book.issueDate)}</td>
-                  <td>{formatDate(book.returnDate)}</td>
-                  <td>
-                    <button onClick={() => handleReturn(book.name)}>
-                      Return {book.name}
-                    </button>
-                  </td>
+      <div className="flex flex-wrap justify-center items-center gap-5 flex-col">
+        {userInfo.booksIssued && (
+          <div className="mt-8 bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Books Issued
+            </h2>
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border p-3 text-center">Name</th>
+                  <th className="border p-3 text-center">Issued Date</th>
+                  <th className="border p-3 text-center">Return Date</th>
+                  <th className="border p-3 text-center">Return</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}{" "}
-      <button
-        className="border-4 border-black px-4 py-2"
-        onClick={handleBookIssue}
-      >
-        Issue a new book
-      </button>
-    </>
+              </thead>
+              <tbody>
+                {userInfo.booksIssued.map((book) => (
+                  <tr key={book.name} className="border-b">
+                    <td className="border p-3">{book.name}</td>
+                    <td className="border p-3">{formatDate(book.issueDate)}</td>
+                    <td className="border p-3">
+                      {formatDate(book.returnDate)}
+                    </td>
+                    <td className="border p-3 text-center">
+                      <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+                        onClick={() => handleReturn(book.name)}
+                      >
+                        Return
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <button
+          className="mt-8 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+          onClick={handleBookIssue}
+        >
+          Issue a New Book
+        </button>
+      </div>
+    </div>
   );
 }
 
