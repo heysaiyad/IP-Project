@@ -11,6 +11,8 @@ import ScanCode from "./components/ScanCode.jsx";
 import Home from "./components/Home.jsx";
 import UserInfo from "./components/UserInfo.jsx";
 import ReturnBook from "./components/ReturnBook.jsx";
+import AllBooks from "./components/AllBooks.jsx";
+import IssuedBooks from "./components/IssuedBooks.jsx";
 import store from "./Store/store.js";
 import { Provider } from "react-redux";
 
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
       {
         path: "/:id/:bookName/return",
         element: <ReturnBook />,
+      },
+      {
+        path: "/all-books",
+        element: <AllBooks />,
+      },
+      {
+        path: "/issued-books",
+        element: <IssuedBooks />,
       },
     ],
   },

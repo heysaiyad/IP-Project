@@ -25,8 +25,8 @@ function Header() {
         className="hover:text-yellow-300"
       />
       <LinkBtn
-        to={token ? "/add-user" : "/login"}
-        text="Add a new User"
+        to={token ? "/all-books" : "/login"}
+        text="All Books"
         className="hover:text-yellow-300"
       />
       <LinkBtn
@@ -35,8 +35,8 @@ function Header() {
         className="hover:text-yellow-300"
       />
       <LinkBtn
-        to={token ? "/scan-code" : "/login"}
-        text="Scan Code"
+        to={token ? "/issued-books" : "/login"}
+        text="Issued Books"
         className="hover:text-yellow-300"
       />
       {authStatus.auth ? (
